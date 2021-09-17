@@ -1,18 +1,11 @@
 #include "stack.h"
 
-struct Stack
-{
-    int top;
-    int maxSize;
-    int *array;
-};
-
 struct Stack *makeStack(int maxSize)
 {
-    struct Stack *stack = (struct Stack*)malloc(sizeof(struct Stack));
+    struct Stack *stack = (struct Stack *)malloc(sizeof(struct Stack));
     stack->maxSize = maxSize;
     stack->top = -1;
-    stack->array = (int*)malloc(stack->maxSize * sizeof(int));
+    stack->array = (int *)malloc(stack->maxSize * sizeof(int));
     return stack;
 }
 
@@ -30,12 +23,11 @@ int push(struct Stack *stack, int elem)
 {
     if (isFull(stack))
     {
-        return 1;
+        return 0;
     }
 
-    stack->top++;
-    stack->array[stack->top] = elem;
-    return 0;
+    stack->array[++stack->top] = elem;
+    return 1;
 }
 
 int pop(struct Stack *stack)
@@ -45,8 +37,9 @@ int pop(struct Stack *stack)
         return INT_MIN;
     }
 
+    int res = stack->array[stack->top];
     stack->top--;
-    return stack->array[stack->top + 1];
+    return res;
 }
 
 int peek(struct Stack *stack)
