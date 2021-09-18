@@ -10,7 +10,7 @@
 
 struct Answer
 {
-    int isValid; // 1 if expression was valid,  -1 if invalid
+    int isValid; // 1 if expression was valid,  0 if invalid
     int result;
 };
 

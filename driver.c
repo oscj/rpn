@@ -2,15 +2,12 @@
 #include <string.h>
 #include "calculator.h"
 
-// driver
-int main(int argc, char *argv[])
+void pushElementsToStack(int numelements, char *elements[], struct Stack *elemStack)
 {
-    struct Stack *elemStack = makeStack(argc);
-    push(elemStack, TERMINATION); // know when to terminate
-    // last to first to push to stack in order for popping
-    for (int i = argc - 1; i >= 0; i--)
+    push(elemStack, TERMINATION); // last token is always termination, so push first
+    for (int i = numelements; i >= 0; i--)
     {
-        char *cur = argv[i];
+        char *cur = elements[i];
         if (*cur == '+')
         {
             push(elemStack, ADDITION);
@@ -38,19 +35,28 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
     }
+}
 
+// driver
+int main(int argc, char *argv[])
+{
+    // create element stack
+    struct Stack *elemStack = makeStack(argc);
+    pushElementsToStack(argc - 1, argv, elemStack);
 
+    // get answer
     struct Answer *ans = calculate(elemStack);
 
-    if (ans->isValid == -1)
+    // deal with results
+    if (ans->isValid == 0)
     {
         fprintf(stderr, "Invalid Expression.\n");
         free(ans);
         exit(EXIT_FAILURE);
     }
-    else if (ans->isValid == 1)
+    else if (ans->isValid == 1 && ans->result != INT_MIN)
     {
-        fprintf(stdout, "Result: %d", ans->result);
+        fprintf(stdout, "Result: %d\n", ans->result);
         free(ans);
     }
 

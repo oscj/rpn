@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "calculator.h"
 
 void pushOperand(struct Stack *calcStack, int curr)
@@ -41,7 +40,6 @@ void divide(struct Stack *calcStack)
 
 struct Answer *terminate(struct Stack *calcStack, struct Stack *elemStack)
 {
-    // TODO: determine if expression was valid
     int validStack = calcStack->top == 0;
     int calcResult = pop(calcStack);
     erase(calcStack);
@@ -55,20 +53,41 @@ struct Answer *terminate(struct Stack *calcStack, struct Stack *elemStack)
 struct Answer *calculate(struct Stack *elemStack)
 {
     struct Stack *calcStack = makeStack(elemStack->maxSize);
-    while (!isEmpty(elemStack))
+    int loopValid = isEmpty(elemStack) == 0;
+    while (loopValid)
     {
         int curr = pop(elemStack);
         switch (curr)
         {
         case ADDITION:
+            if (calcStack->top == 0)
+            {
+                loopValid = 0;
+                break;
+            }
             add(calcStack);
             break;
         case SUBTRACTION:
+            if (calcStack->top == 0)
+            {
+                loopValid = 0;
+                break;
+            }
             subtract(calcStack);
             break;
         case MULTIPLICATION:
+            if (calcStack->top == 0)
+            {
+                loopValid = 0;
+                break;
+            }
             multiply(calcStack);
         case DIVISION:
+            if (calcStack->top == 0)
+            {
+                loopValid = 0;
+                break;
+            }
             divide(calcStack);
         case TERMINATION:
             return terminate(calcStack, elemStack);
@@ -78,8 +97,8 @@ struct Answer *calculate(struct Stack *elemStack)
         }
     }
 
-    struct Answer *ans = malloc(sizeof(struct Answer));
-    ans->isValid = -1;
-    ans->result = INT_MIN;
-    return ans;
+    struct Answer *answer = malloc(sizeof(struct Answer));
+    answer->isValid = 0;
+    answer->result = INT_MIN;
+    return answer;
 }
