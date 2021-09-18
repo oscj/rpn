@@ -6,7 +6,9 @@
 int main(int argc, char *argv[])
 {
     struct Stack *elemStack = makeStack(argc);
-    for (int i = 1; i < argc; i++)
+    push(elemStack, TERMINATION); // know when to terminate
+    // last to first to push to stack in order for popping
+    for (int i = argc - 1; i >= 0; i--)
     {
         char *cur = argv[i];
         if (*cur == '+')
@@ -37,20 +39,19 @@ int main(int argc, char *argv[])
         }
     }
 
-    push(elemStack, TERMINATION);
 
-    int *res = calculate(elemStack);
+    struct Answer *ans = calculate(elemStack);
 
-    if (res[1] == 0)
+    if (ans->isValid == -1)
     {
         fprintf(stderr, "Invalid Expression.\n");
-        free(res);
+        free(ans);
         exit(EXIT_FAILURE);
     }
-    else if (res[1] == 1)
+    else if (ans->isValid == 1)
     {
-        fprintf(stdout, "Result: %d", res[0]);
-        free(res);
+        fprintf(stdout, "Result: %d", ans->result);
+        free(ans);
     }
 
     return 0;

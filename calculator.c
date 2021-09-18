@@ -1,12 +1,13 @@
+#include <stdio.h>
 #include "calculator.h"
 
-void operand(struct Stack *calcStack, int curr)
+void pushOperand(struct Stack *calcStack, int curr)
 {
     push(calcStack, curr);
     return;
 }
 
-void addition(struct Stack *calcStack)
+void add(struct Stack *calcStack)
 {
     int first = pop(calcStack);
     int second = pop(calcStack);
@@ -14,7 +15,7 @@ void addition(struct Stack *calcStack)
     push(calcStack, res);
 }
 
-void subtraction(struct Stack *calcStack)
+void subtract(struct Stack *calcStack)
 {
     int second = pop(calcStack);
     int first = pop(calcStack);
@@ -38,33 +39,32 @@ void divide(struct Stack *calcStack)
     push(calcStack, res);
 }
 
-int* terminate(struct Stack *calcStack, struct Stack *elemStack)
+struct Answer *terminate(struct Stack *calcStack, struct Stack *elemStack)
 {
     // TODO: determine if expression was valid
     int validStack = calcStack->top == 0;
     int calcResult = pop(calcStack);
     erase(calcStack);
     erase(elemStack);
-    int *res = malloc(sizeof(int) * 2);
-    res[0] = calcResult;
-    res[1] = validStack;
-    return res;
+    struct Answer *ans = malloc(sizeof(struct Answer));
+    ans->result = calcResult;
+    ans->isValid = validStack;
+    return ans;
 }
 
-int* calculate(struct Stack *elemStack)
+struct Answer *calculate(struct Stack *elemStack)
 {
     struct Stack *calcStack = makeStack(elemStack->maxSize);
-    for (int i = 0; i <= elemStack->top; i++)
+    while (!isEmpty(elemStack))
     {
-        int curr = elemStack->array[i];
-
+        int curr = pop(elemStack);
         switch (curr)
         {
         case ADDITION:
-            addition(calcStack);
+            add(calcStack);
             break;
         case SUBTRACTION:
-            subtraction(calcStack);
+            subtract(calcStack);
             break;
         case MULTIPLICATION:
             multiply(calcStack);
@@ -73,13 +73,13 @@ int* calculate(struct Stack *elemStack)
         case TERMINATION:
             return terminate(calcStack, elemStack);
         default:
-            operand(calcStack, curr);
+            pushOperand(calcStack, curr);
             break;
         }
     }
 
-    int *res = malloc(sizeof(int) * 2);
-    res[0] = INT_MIN;
-    res[1] = -1;
-    return res;
+    struct Answer *ans = malloc(sizeof(struct Answer));
+    ans->isValid = -1;
+    ans->result = INT_MIN;
+    return ans;
 }

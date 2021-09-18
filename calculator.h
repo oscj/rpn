@@ -8,8 +8,13 @@
 #define DIVISION -4
 #define TERMINATION -5
 
+struct Answer
+{
+    int isValid; // 1 if expression was valid,  -1 if invalid
+    int result;
+};
 
 // calculates answer to stack containing rpn expression elements
-int* calculate(struct Stack *elemStack);
+struct Answer *calculate(struct Stack *elemStack);
 
 #endif
