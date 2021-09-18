@@ -100,5 +100,7 @@ struct Answer *calculate(struct Stack *elemStack)
     struct Answer *answer = malloc(sizeof(struct Answer));
     answer->isValid = 0;
     answer->result = INT_MIN;
+    erase(elemStack);
+    erase(calcStack);
     return answer;
 }
